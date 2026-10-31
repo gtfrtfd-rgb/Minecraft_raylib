@@ -17,17 +17,20 @@ public:
     Chunk(int cx, int cz);
     ~Chunk();
 
-    void GenerateData();  
-    void BuildMeshData(); 
-    void UploadToGPU();   
+    Chunk(const Chunk&) = delete;
+    Chunk& operator=(const Chunk&) = delete;
+
+    void GenerateData();
+    void BuildMeshData();
+    void UploadToGPU();
     void Draw() const;
 
     BlockType GetBlock(int x, int y, int z) const;
     void SetBlock(int x, int y, int z, BlockType type);
-    void MarkDirty(); // ⬅️ Безопасная пометка на перестройку
+    void MarkDirty();
 
     std::atomic<ChunkState> state;
-    
+
     std::vector<float> pendingVertices;
     std::vector<float> pendingTexcoords;
     std::vector<unsigned char> pendingColors;
@@ -43,8 +46,8 @@ private:
     Model model = {0};
     bool meshBuilt = false;
 
-    std::mutex chunkMutex; // Защита pending-векторов
-    mutable std::shared_mutex blocksMutex; // Защита массива blocks (чтение/запись)
+    std::mutex chunkMutex;                 // pending-векторы
+    mutable std::shared_mutex blocksMutex; // массив blocks
     std::atomic<bool> needsRemesh{false};
 
     void UnloadMesh();
